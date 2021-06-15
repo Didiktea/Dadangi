@@ -24,7 +24,7 @@ PM_START = """Hello {}, my name is {}!
 
 Hello,I'm here to help you manage your Group!
 
-I am [Dadangi](https://telegra.ph/file/43cb73821a92b6d3a4c6e.jpg) 
+You can call me [Dadangi](https://telegra.ph/file/43cb73821a92b6d3a4c6e.jpg) or a Bot.
 
 Made from the source code of [Didiktea](t.me/Didiktea)
 
