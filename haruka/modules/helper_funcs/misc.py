@@ -1,12 +1,10 @@
 from math import ceil
 from typing import List, Dict
 
-from telegram import MAX_MESSAGE_LENGTH, InlineKeyboardButton, Bot, ParseMode
+from telegram import MAX_MESSAGE_LENGTH, InlineKeyboardButton, Bot, ParseMode,Update
 from telegram.error import TelegramError
 
-from haruka import LOAD, NO_LOAD
-from haruka.modules.translations.strings import tld
-from telegram.ext import CommandHandler, Filters, MessageHandler, CallbackQueryHandler
+from cinderella import LOAD, NO_LOAD
 
 
 class EqInlineKeyboardButton(InlineKeyboardButton):
@@ -44,37 +42,39 @@ def split_message(msg: str) -> List[str]:
 def paginate_modules(page_n: int, module_dict: Dict, prefix, chat=None) -> List:
     if not chat:
         modules = sorted(
-            [
-                EqInlineKeyboardButton(
-                    x.__mod_name__,
-                    callback_data="{}_module({})".format(
-                        prefix, x.__mod_name__.lower()
-                    ),
-                )
-                for x in module_dict.values()
-            ]
-        )
+            [EqInlineKeyboardButton(x.__mod_name__,
+                                    callback_data="{}_module({})".format(prefix, x.__mod_name__.lower())) for x
+             in module_dict.values()])
     else:
         modules = sorted(
-            [
-                EqInlineKeyboardButton(
-                    x.__mod_name__,
-                    callback_data="{}_module({},{})".format(
-                        prefix, chat, x.__mod_name__.lower()
-                    ),
-                )
-                for x in module_dict.values()
-            ]
-        )
+            [EqInlineKeyboardButton(x.__mod_name__,
+                                    callback_data="{}_module({},{})".format(prefix, chat, x.__mod_name__.lower())) for x
+             in module_dict.values()])
 
-    pairs = [modules[i * 3 : (i + 1) * 3] for i in range((len(modules) + 3 - 1) // 3)]
+    pairs = [
+    modules[i * 3:(i + 1) * 3] for i in range((len(modules) + 3 - 1) // 3)
+    ]
 
     round_num = len(modules) / 3
     calc = len(modules) - round(round_num)
     if calc == 1:
-        pairs.append((modules[-1],))
+        pairs.append((modules[-1], ))
     elif calc == 2:
-        pairs.append((modules[-1],))
+        pairs.append((modules[-1], ))
+
+    max_num_pages = ceil(len(pairs) / 7)
+    modulo_page = page_n % max_num_pages
+
+    # can only have a certain amount of buttons side by side
+    if len(pairs) > 7:
+        pairs = pairs[modulo_page * 7:7 * (modulo_page + 1)] + [
+            (EqInlineKeyboardButton("<<<", callback_data="{}_prev({})".format(prefix, modulo_page)),
+                EqInlineKeyboardButton("🏡 Home", callback_data="bot_start"),
+             EqInlineKeyboardButton(">>>", callback_data="{}_next({})".format(prefix, modulo_page)))]
+
+    else:
+        pairs += [[EqInlineKeyboardButton("🏡 Home", callback_data="bot_start")]]
+
 
     return pairs
 
@@ -115,17 +115,12 @@ def revert_buttons(buttons):
 
     return res
 
+def sendMessage(text: str, bot: Bot, update: Update):
+    return bot.send_message(update.message.chat_id,
+                                    reply_to_message_id=update.message.message_id,
+                                    text=text, parse_mode=ParseMode.HTML)
+
+
 
 def is_module_loaded(name):
-    return (not LOAD or name in LOAD) and name not in NO_LOAD
-
-
-def user_bot_owner(func):
-    @wraps(func)
-    def is_user_bot_owner(bot: Bot, update: Update, *args, **kwargs):
-        user = update.effective_user
-        if user and user.id == OWNER_ID:
-            return func(bot, update, *args, **kwargs)
-        else:
-            pass
-    return is_user_bot_owner
+     return name not in NO_LOAD
