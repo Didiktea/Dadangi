@@ -507,7 +507,7 @@ def bootleggers(bot: Bot, update: Update):
 
 
 __help__ = """
-*This module is made with love by* @RealAkito *and code beauty by* @kandnub
+*This module is made with love by* @Didiktea *
  *Device Specific Rom*
  - /pearl <device>: Get the Pearl Rom
  - /havoc <device>: Get the Havoc Rom
