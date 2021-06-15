@@ -22,7 +22,7 @@ from haruka.modules.connection import connected
 
 PM_START = """Hello {}, my name is {}!
 
-Hello,I'm here to help you manage your Group!
+I'm here to help you manage your Group!
 
 You can call me [Dadangi](https://telegra.ph/file/43cb73821a92b6d3a4c6e.jpg) or a Bot.
 
@@ -209,7 +209,7 @@ def control_panel(bot, update):
         else:
             text += "\nNo chat connected!"
 
-        keyboard += [[InlineKeyboardButton(text="Back", callback_data="bot_start")]]
+        keyboard += [[InlineKeyboardButton(text="🏃 Back", callback_data="bot_start")]]
 
         update.effective_message.reply_text(text, reply_markup=InlineKeyboardMarkup(keyboard), parse_mode=ParseMode.MARKDOWN)
 
@@ -461,7 +461,7 @@ def settings_button(bot: Bot, update: Update):
             query.message.reply_text(text=text,
                                      parse_mode=ParseMode.MARKDOWN,
                                      reply_markup=InlineKeyboardMarkup(
-                                         [[InlineKeyboardButton(text="Back",
+                                         [[InlineKeyboardButton(text="🏃 Back",
                                                                 callback_data="stngs_back({})".format(chat_id))]]))
 
         elif prev_match:
